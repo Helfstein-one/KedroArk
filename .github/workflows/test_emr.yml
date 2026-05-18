@@ -29,7 +29,7 @@ jobs:
         
       - name: Check Python Code Formatting & Linting (Ruff)
         run: |
-          cd test-emr-project
+          cd test_emr_project
           python -m pip install ruff
           ruff check .
           ruff format --check .
@@ -39,24 +39,24 @@ jobs:
         with:
           terraform_version: 1.5.0
       - run: |
-          cd test-emr-project/terraform
+          cd test_emr_project/terraform
           terraform init -backend=false
           terraform fmt -check
           terraform validate
 
       - name: Run Unit Tests
         run: |
-          cd test-emr-project
+          cd test_emr_project
           python -m pip install -e .[testing]
           pytest -m unit
 
       - name: Run Integration & Local Infrastructure Tests
         run: |
-          cd test-emr-project
+          cd test_emr_project
           poetry run kedroark test-local
 
       - name: Verify Package Build (Wheel)
         run: |
-          cd test-emr-project
+          cd test_emr_project
           python -m pip install build
           python -m build

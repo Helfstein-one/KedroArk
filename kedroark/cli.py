@@ -7,13 +7,13 @@ import shutil
 app = typer.Typer(help="KedroArk CLI - Scaffold Kedro projects for AWS")
 console = Console()
 
-KEDRO_ARK_BANNER = """
+KEDRO_ARK_BANNER = r"""
 [bold magenta]
   _  __       _             _         _    
  | |/ /      | |           / \   _ __| | __
  | ' / ___ __| |_ __ ___  / _ \ | '__| |/ /
  | . \/ _ / _` | '__/ _ \/ ___ \| |  |   < 
- |_|\_\___\__,_|_|  \___/_/   \_\_|  |_|\_\\
+ |_|\_\___\__,_|_|  \___/_/   \_\_|  |_|\_\
 [/bold magenta]
 [bold cyan]Scaffold Enterprise Kedro Pipelines for AWS[/bold cyan]
 """
