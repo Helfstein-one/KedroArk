@@ -4,7 +4,9 @@ from pyspark.sql import DataFrame
 
 def clean_financial_data(df: DataFrame) -> DataFrame:
     """Clean financial transactions data."""
-    return df.filter(F.col("amount") > 0).dropna(subset=["transaction_id", "amount"])
+    return df.filter((F.col("amount") > 0) & (F.col("status") == "COMPLETED")).dropna(
+        subset=["transaction_id", "amount"]
+    )
 
 
 def aggregate_by_currency(df: DataFrame) -> DataFrame:

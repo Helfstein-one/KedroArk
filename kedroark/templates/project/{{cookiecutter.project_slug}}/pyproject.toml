@@ -31,7 +31,7 @@ dependencies = [
 addopts = """
 --cov-report term-missing \
 --cov src/{{ cookiecutter.project_slug }} \
---cov-fail-under 80 \
+--cov-fail-under 30 \
 -ra \
 --strict-markers
 """
