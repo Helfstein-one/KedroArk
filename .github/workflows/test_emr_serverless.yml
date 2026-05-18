@@ -2,9 +2,9 @@ name: Test KedroArk - AWS EMR Serverless
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   test-emr-serverless:
