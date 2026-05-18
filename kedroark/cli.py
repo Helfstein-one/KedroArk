@@ -17,30 +17,40 @@ KEDRO_ARK_BANNER = r"""
 [bold cyan]Scaffold Enterprise Kedro Pipelines for AWS[/bold cyan]
 """
 
+
 def show_banner():
     console.print(KEDRO_ARK_BANNER)
+
 
 @app.command()
 def init(
     project_name: str = typer.Argument(..., help="Name of the new Kedro project"),
     compute: str = typer.Option(
-        "AWS Glue", "--compute", "-c",
-        help="Target compute engine: 'AWS Glue', 'AWS EMR', or 'AWS EMR Serverless'"
+        "AWS Glue",
+        "--compute",
+        "-c",
+        help="Target compute engine: 'AWS Glue', 'AWS EMR', or 'AWS EMR Serverless'",
     ),
     example: str = typer.Option(
-        "no", "--example", "-e",
-        help="Include an example pipeline? Pass 'finance' for the financial Iceberg example."
+        "no",
+        "--example",
+        "-e",
+        help="Include an example pipeline? Pass 'finance' for the financial Iceberg example.",
     ),
     local_infra: bool = typer.Option(
-        False, "--local-infra", "-l",
-        help="Include a docker-compose setup with MinIO to test S3 interactions locally."
-    )
+        False,
+        "--local-infra",
+        "-l",
+        help="Include a docker-compose setup with MinIO to test S3 interactions locally.",
+    ),
 ):
     """
     Initialize a new Kedro project with AWS infrastructure support.
     """
     show_banner()
-    console.print(f"[bold green]Initializing KedroArk project: {project_name}[/bold green]")
+    console.print(
+        f"[bold green]Initializing KedroArk project: {project_name}[/bold green]"
+    )
     console.print(f"Target Compute: [bold cyan]{compute}[/bold cyan]")
 
     include_finance = "yes" if example.lower() == "finance" else "no"
@@ -53,20 +63,17 @@ def init(
         "project_name": project_name,
         "compute_target": compute,
         "include_finance_example": include_finance,
-        "include_local_infra": include_local_infra
+        "include_local_infra": include_local_infra,
     }
 
     try:
         cookiecutter(
-            template_dir,
-            no_input=True,
-            extra_context=extra_context,
-            output_dir="."
+            template_dir, no_input=True, extra_context=extra_context, output_dir="."
         )
         console.print("[bold green]Project created successfully![/bold green]")
 
         # Determine the generated project directory
-        project_slug = project_name.lower().replace(' ', '_').replace('-', '_')
+        project_slug = project_name.lower().replace(" ", "_").replace("-", "_")
 
         # Run some post-generate cleanup if needed based on compute target
         _post_generate(project_slug, compute, include_finance)
@@ -74,15 +81,19 @@ def init(
     except Exception as e:
         console.print(f"[bold red]Failed to create project: {e}[/bold red]")
 
+
 def _post_generate(project_slug: str, compute: str, include_finance: str):
     """Handle dynamic removal or adjustments after generation."""
 
     # Optional: cleanup terraform files based on compute choice if cookiecutter jinja wasn't enough
     pass
 
+
 @app.command()
 def test_local(
-    env: str = typer.Option("local_infra", "--env", help="Kedro environment to use for local testing.")
+    env: str = typer.Option(
+        "local_infra", "--env", help="Kedro environment to use for local testing."
+    ),
 ):
     """
     Start local infrastructure (MinIO) using docker-compose and run the Kedro pipeline locally.
@@ -92,7 +103,9 @@ def test_local(
     import subprocess
 
     if not os.path.exists("docker-compose.yml"):
-        console.print("[bold red]Error: docker-compose.yml not found. Did you initialize with --local-infra?[/bold red]")
+        console.print(
+            "[bold red]Error: docker-compose.yml not found. Did you initialize with --local-infra?[/bold red]"
+        )
         raise typer.Exit(1)
 
     try:
@@ -110,8 +123,19 @@ def test_local(
             service_to_run = "emr-serverless-emulator"
 
         if service_to_run:
-            console.print(f"[bold cyan]Detected target compute. Running {service_to_run}...[/bold cyan]")
-            subprocess.run(["docker-compose", "up", "--build", "--abort-on-container-exit", service_to_run], check=True)
+            console.print(
+                f"[bold cyan]Detected target compute. Running {service_to_run}...[/bold cyan]"
+            )
+            subprocess.run(
+                [
+                    "docker-compose",
+                    "up",
+                    "--build",
+                    "--abort-on-container-exit",
+                    service_to_run,
+                ],
+                check=True,
+            )
         else:
             # Fallback to local execution if no dedicated service is found
             subprocess.run(["kedro", "run", "--env", env], check=True)
@@ -121,6 +145,7 @@ def test_local(
     finally:
         console.print("[bold yellow]Tearing down local infrastructure...[/bold yellow]")
         subprocess.run(["docker-compose", "down"])
+
 
 if __name__ == "__main__":
     app()
