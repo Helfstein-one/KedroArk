@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: emrs-project
-          path: test-emrs-project/
+          path: test_emrs_project/
 
   lint:
     needs: scaffold
@@ -47,10 +47,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test-emrs-project
+          path: test_emrs_project
       - name: Check Python Code Formatting & Linting (Ruff)
         run: |
-          cd test-emrs-project
+          cd test_emrs_project
           python -m pip install ruff
           ruff check .
           ruff format --check .
@@ -62,13 +62,13 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test-emrs-project
+          path: test_emrs_project
       - name: Terraform Formatting and Validation
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
       - run: |
-          cd test-emrs-project/terraform
+          cd test_emrs_project/terraform
           terraform init -backend=false
           terraform fmt -check
           terraform validate
@@ -87,10 +87,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test-emrs-project
+          path: test_emrs_project
       - name: Run Unit Tests
         run: |
-          cd test-emrs-project
+          cd test_emrs_project
           python -m pip install -e .
           pytest -m unit
 
@@ -111,10 +111,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test-emrs-project
+          path: test_emrs_project
       - name: Run Integration & Local Infrastructure Tests
         run: |
-          cd test-emrs-project
+          cd test_emrs_project
           kedroark test-local
 
   build:
@@ -131,9 +131,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test-emrs-project
+          path: test_emrs_project
       - name: Verify Package Build (Wheel)
         run: |
-          cd test-emrs-project
+          cd test_emrs_project
           python -m pip install build
           python -m build
