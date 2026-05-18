@@ -41,7 +41,7 @@ def init(
         False,
         "--local-infra",
         "-l",
-        help="Include a docker-compose setup with MinIO to test S3 interactions locally.",
+        help="Include a docker compose setup with MinIO to test S3 interactions locally.",
     ),
 ):
     """
@@ -96,7 +96,7 @@ def test_local(
     ),
 ):
     """
-    Start local infrastructure (MinIO) using docker-compose and run the Kedro pipeline locally.
+    Start local infrastructure (MinIO) using docker compose and run the Kedro pipeline locally.
     """
     show_banner()
     console.print("[bold green]Starting local infrastructure (MinIO)...[/bold green]")
@@ -109,8 +109,8 @@ def test_local(
         raise typer.Exit(1)
 
     try:
-        subprocess.run(["docker-compose", "up", "-d"], check=True)
-        # Determine which compute target service exists in docker-compose
+        subprocess.run(["docker", "compose", "up", "-d"], check=True)
+        # Determine which compute target service exists in docker compose
         with open("docker-compose.yml", "r") as f:
             compose_content = f.read()
 
@@ -128,7 +128,7 @@ def test_local(
             )
             subprocess.run(
                 [
-                    "docker-compose",
+                    "docker", "compose",
                     "up",
                     "--build",
                     "--abort-on-container-exit",
@@ -144,7 +144,7 @@ def test_local(
         console.print(f"[bold red]Pipeline or infrastructure failed: {e}[/bold red]")
     finally:
         console.print("[bold yellow]Tearing down local infrastructure...[/bold yellow]")
-        subprocess.run(["docker-compose", "down"])
+        subprocess.run(["docker", "compose", "down"])
 
 
 if __name__ == "__main__":
