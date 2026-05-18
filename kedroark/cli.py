@@ -128,7 +128,8 @@ def test_local(
             )
             subprocess.run(
                 [
-                    "docker", "compose",
+                    "docker",
+                    "compose",
                     "up",
                     "--build",
                     "--abort-on-container-exit",
