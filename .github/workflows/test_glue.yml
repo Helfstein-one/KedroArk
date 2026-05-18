@@ -22,10 +22,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
+          python -m pip install -e .
 
       - name: Generate Glue Project
         run: |
-          poetry run kedroark init test-glue-project --compute "AWS Glue" --example finance --local-infra
+          kedroark init test-glue-project --compute "AWS Glue" --example finance --local-infra
         
       - name: Check Python Code Formatting & Linting (Ruff)
         run: |
@@ -53,7 +54,7 @@ jobs:
       - name: Run Integration & Local Infrastructure Tests
         run: |
           cd test_glue_project
-          poetry -C .. run kedroark test-local
+          kedroark test-local
 
       - name: Verify Package Build (Wheel)
         run: |

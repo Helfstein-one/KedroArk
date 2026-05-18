@@ -22,10 +22,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
+          python -m pip install -e .
 
       - name: Generate EMR Project
         run: |
-          poetry run kedroark init test-emr-project --compute "AWS EMR" --example finance --local-infra
+          kedroark init test-emr-project --compute "AWS EMR" --example finance --local-infra
         
       - name: Check Python Code Formatting & Linting (Ruff)
         run: |
@@ -53,7 +54,7 @@ jobs:
       - name: Run Integration & Local Infrastructure Tests
         run: |
           cd test_emr_project
-          poetry -C .. run kedroark test-local
+          kedroark test-local
 
       - name: Verify Package Build (Wheel)
         run: |
