@@ -5,7 +5,7 @@ from typing import Dict
 from kedro.framework.project import find_pipelines
 from kedro.pipeline import Pipeline
 
-from {{ cookiecutter.project_slug }}.pipelines.finance_example.pipeline import create_pipeline as finance_pipeline
+from test_glue_project.pipelines.finance_example.pipeline import create_pipeline as finance_pipeline
 
 
 def register_pipelines() -> Dict[str, Pipeline]:

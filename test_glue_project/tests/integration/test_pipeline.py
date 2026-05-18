@@ -2,7 +2,7 @@ import pytest
 from kedro.io import DataCatalog
 from kedro.runner import SequentialRunner
 
-from {{cookiecutter.project_slug}}.pipelines.finance_example.pipeline import create_pipeline
+from test_glue_project.pipelines.finance_example.pipeline import create_pipeline
 
 
 @pytest.mark.integration

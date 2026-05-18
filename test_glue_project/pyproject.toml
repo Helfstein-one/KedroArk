@@ -1,13 +1,13 @@
 [tool.kedro]
-package_name = "{{ cookiecutter.project_slug }}"
-project_name = "{{ cookiecutter.project_name }}"
+package_name = "test_glue_project"
+project_name = "test-glue-project"
 kedro_init_version = "0.19.1"
 tools = ["Linting", "Testing", "Custom Logging", "Documentation", "Data Structure", "Kedro Viz"]
 
 [project]
-name = "{{ cookiecutter.project_slug }}"
+name = "test_glue_project"
 version = "0.1.0"
-description = "Kedro project configured for {{ cookiecutter.compute_target }}."
+description = "Kedro project configured for AWS Glue."
 readme = "README.md"
 requires-python = ">=3.9, <3.12"
 dependencies = [
@@ -17,18 +17,18 @@ dependencies = [
     "pytest>=7.0.0",
     "pytest-benchmark>=4.0.0",
     "boto3>=1.28.0",
-{% if cookiecutter.include_finance_example == 'yes' %}
+
     "delta-spark>=2.4.0", # Or iceberg-spark-runtime if needed
-{% endif %}
+
 ]
 
 [project.scripts]
-"{{ cookiecutter.project_slug }}" = "{{ cookiecutter.project_slug }}.__main__:main"
+"test_glue_project" = "test_glue_project.__main__:main"
 
 [tool.pytest.ini_options]
 addopts = """
 --cov-report term-missing \
---cov src/{{ cookiecutter.project_slug }} \
+--cov src/test_glue_project \
 --cov-fail-under 80 \
 -ra \
 --strict-markers

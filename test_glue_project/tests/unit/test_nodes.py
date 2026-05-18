@@ -1,6 +1,6 @@
 import pytest
 
-from {{cookiecutter.project_slug}}.pipelines.finance_example.nodes import (
+from test_glue_project.pipelines.finance_example.nodes import (
     aggregate_by_currency,
     clean_financial_data,
 )

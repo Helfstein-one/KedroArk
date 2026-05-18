@@ -1,6 +1,6 @@
 import pytest
 
-from {{cookiecutter.project_slug}}.pipelines.finance_example.nodes import clean_financial_data
+from test_glue_project.pipelines.finance_example.nodes import clean_financial_data
 
 
 @pytest.mark.performance
