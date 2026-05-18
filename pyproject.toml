@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "kedroark"
+version = "0.1.0"
+description = "CLI para Scaffold de Projetos Kedro na AWS (Glue, EMR, EMR Serverless)"
+authors = ["Mauricio Helfstein <mauriciohelfstein@gmail.com>"]
+readme = "README.md"
+packages = [{include = "kedroark"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+typer = {extras = ["all"], version = "^0.12.0"}
+cookiecutter = "^2.5.0"
+jinja2 = "^3.1.0"
+rich = "^13.0.0"
+click = "<8.1.8"
+
+[tool.poetry.scripts]
+kedroark = "kedroark.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
