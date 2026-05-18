@@ -53,7 +53,7 @@ jobs:
       - name: Run Integration & Local Infrastructure Tests
         run: |
           cd test_emr_project
-          poetry run kedroark test-local
+          poetry -C .. run kedroark test-local
 
       - name: Verify Package Build (Wheel)
         run: |

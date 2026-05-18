@@ -2,7 +2,6 @@ import typer
 from rich.console import Console
 from cookiecutter.main import cookiecutter
 import os
-import shutil
 
 app = typer.Typer(help="KedroArk CLI - Scaffold Kedro projects for AWS")
 console = Console()
@@ -77,7 +76,6 @@ def init(
 
 def _post_generate(project_slug: str, compute: str, include_finance: str):
     """Handle dynamic removal or adjustments after generation."""
-    project_path = os.path.join(os.getcwd(), project_slug)
     
     # Optional: cleanup terraform files based on compute choice if cookiecutter jinja wasn't enough
     pass
