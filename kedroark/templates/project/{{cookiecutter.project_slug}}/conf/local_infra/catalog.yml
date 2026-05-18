@@ -1,0 +1,11 @@
+{% if cookiecutter.include_local_infra == 'yes' and cookiecutter.include_finance_example == 'yes' %}
+raw_financial_data:
+  filepath: s3a://my-data-bucket/raw/financial/
+
+cleaned_financial_data:
+  filepath: s3a://my-data-bucket/silver/financial_clean/
+
+# The iceberg table also needs to write to s3a
+aggregated_financial_data:
+  filepath: local.db.financial_aggregations
+{% endif %}

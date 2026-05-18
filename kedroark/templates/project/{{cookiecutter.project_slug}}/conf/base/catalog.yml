@@ -1,0 +1,33 @@
+# Kedro Data Catalog
+# Configuration for AWS Glue Data Catalog & Apache Iceberg
+{% if cookiecutter.include_finance_example == 'yes' %}
+raw_financial_data:
+  type: spark.SparkDataSet
+  filepath: s3://my-data-bucket/raw/financial/
+  file_format: csv
+  load_args:
+    header: true
+    inferSchema: true
+
+cleaned_financial_data:
+  type: spark.SparkDataSet
+  filepath: s3://my-data-bucket/silver/financial_clean/
+  file_format: parquet
+  save_args:
+    mode: overwrite
+
+aggregated_financial_data:
+  # Using Iceberg format
+  type: spark.SparkDataSet
+  filepath: local.db.financial_aggregations
+  file_format: iceberg
+  save_args:
+    mode: append
+{% endif %}
+
+# Glue Data Catalog Dynamic Validation Example
+_glue_dynamic_catalog:
+  type: spark.SparkDataSet
+  # In a real scenario, you can define a custom DataSet that pulls metadata
+  # from the Glue Data Catalog and enforces schemas on write.
+  # This serves as a placeholder for the integration.

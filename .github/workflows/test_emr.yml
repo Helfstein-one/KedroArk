@@ -1,0 +1,139 @@
+name: Test KedroArk - AWS EMR
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install KedroArk
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+          python -m pip install -e .
+      - name: Generate EMR Project
+        run: kedroark init test-emr-project --compute "AWS EMR" --example finance --local-infra
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: emr-project
+          path: test-emr-project/
+
+  lint:
+    needs: scaffold
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - uses: actions/download-artifact@v4
+        with:
+          name: emr-project
+          path: test-emr-project
+      - name: Check Python Code Formatting & Linting (Ruff)
+        run: |
+          cd test-emr-project
+          python -m pip install ruff
+          ruff check .
+          ruff format --check .
+
+  terraform:
+    needs: scaffold
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: emr-project
+          path: test-emr-project
+      - name: Terraform Formatting and Validation
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+      - run: |
+          cd test-emr-project/terraform
+          terraform init -backend=false
+          terraform fmt -check
+          terraform validate
+
+  test-unit:
+    needs: scaffold
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - uses: actions/download-artifact@v4
+        with:
+          name: emr-project
+          path: test-emr-project
+      - name: Run Unit Tests
+        run: |
+          cd test-emr-project
+          python -m pip install -e .
+          pytest -m unit
+
+  test-integration:
+    needs: test-unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install KedroArk
+        run: python -m pip install -e .
+      - uses: actions/download-artifact@v4
+        with:
+          name: emr-project
+          path: test-emr-project
+      - name: Run Integration & Local Infrastructure Tests
+        run: |
+          cd test-emr-project
+          kedroark test-local
+
+  build:
+    needs: test-unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - uses: actions/download-artifact@v4
+        with:
+          name: emr-project
+          path: test-emr-project
+      - name: Verify Package Build (Wheel)
+        run: |
+          cd test-emr-project
+          python -m pip install build
+          python -m build
