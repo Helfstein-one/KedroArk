@@ -12,14 +12,14 @@ module "compute" {
 module "compute" {
   source = "./emr"
 
-  project_prefix      = var.project_prefix
-  environment         = var.environment
+  project_prefix = var.project_prefix
+  environment    = var.environment
 }
 {% elif cookiecutter.compute_target == 'AWS EMR Serverless' %}
 module "compute" {
   source = "./emr_serverless"
 
-  project_prefix      = var.project_prefix
-  environment         = var.environment
+  project_prefix = var.project_prefix
+  environment    = var.environment
 }
 {% endif %}
