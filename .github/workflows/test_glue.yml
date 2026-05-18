@@ -47,7 +47,7 @@ jobs:
       - name: Run Unit Tests
         run: |
           cd test_glue_project
-          python -m pip install -e .[testing]
+          python -m pip install -e .
           pytest -m unit
 
       - name: Run Integration & Local Infrastructure Tests
