@@ -52,7 +52,7 @@ resource "aws_glue_job" "kedro_job" {
   default_arguments = {
     "--extra-py-files" = "s3://${var.artifacts_bucket_id}/packages/{{ cookiecutter.project_slug }}-0.1.0-py3-none-any.whl"
   }
-
+  
   glue_version = "4.0"
   worker_type  = "G.1X"
   number_of_workers = 2

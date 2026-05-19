@@ -18,7 +18,6 @@ def test_clean_financial_data(mock_finance_data):
     assert cleaned_df.filter(cleaned_df.status != "COMPLETED").count() == 0
 
 
-@pytest.mark.unit
 def test_aggregate_by_currency(mock_finance_data):
     """Test aggregation logic."""
     cleaned_df = clean_financial_data(mock_finance_data)

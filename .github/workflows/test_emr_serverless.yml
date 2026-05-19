@@ -11,10 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "21"
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -31,26 +27,22 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: emrs-project
-          path: test_emrs_project/
+          path: test-emrs-project/
 
   lint:
     needs: scaffold
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "21"
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test_emrs_project
+          path: test-emrs-project
       - name: Check Python Code Formatting & Linting (Ruff)
         run: |
-          cd test_emrs_project
+          cd test-emrs-project
           python -m pip install ruff
           ruff check .
           ruff format --check .
@@ -62,13 +54,13 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test_emrs_project
+          path: test-emrs-project
       - name: Terraform Formatting and Validation
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
       - run: |
-          cd test_emrs_project/terraform
+          cd test-emrs-project/terraform
           terraform init -backend=false
           terraform fmt -check
           terraform validate
@@ -77,20 +69,16 @@ jobs:
     needs: scaffold
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "21"
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test_emrs_project
+          path: test-emrs-project
       - name: Run Unit Tests
         run: |
-          cd test_emrs_project
+          cd test-emrs-project
           python -m pip install -e .
           pytest -m unit
 
@@ -99,10 +87,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "21"
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -111,29 +95,25 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test_emrs_project
+          path: test-emrs-project
       - name: Run Integration & Local Infrastructure Tests
         run: |
-          cd test_emrs_project
+          cd test-emrs-project
           kedroark test-local
 
   build:
     needs: test-unit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "21"
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - uses: actions/download-artifact@v4
         with:
           name: emrs-project
-          path: test_emrs_project
+          path: test-emrs-project
       - name: Verify Package Build (Wheel)
         run: |
-          cd test_emrs_project
+          cd test-emrs-project
           python -m pip install build
           python -m build

@@ -30,7 +30,6 @@ build/
 .coverage
 htmlcov/
 test-glue-project/
-test_glue_project/
 test-emr-project/
 test-emrs-project/
 
