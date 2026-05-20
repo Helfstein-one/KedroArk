@@ -84,7 +84,7 @@ services:
       - AWS_ACCESS_KEY_ID=minioadmin
       - AWS_SECRET_ACCESS_KEY=minioadmin
     command: >
-      bash -c "pip install -e . && python -c 'import boto3; s3 = boto3.client(\"s3\", endpoint_url=\"http://minio:9000\", aws_access_key_id=\"minioadmin\", aws_secret_access_key=\"minioadmin\"); s3.put_object(Bucket=\"my-data-bucket\", Key=\"raw/financial/data.csv\", Body=\"transaction_id,customer_id,amount,transaction_date,currency,status\\n1,cust_1,150.0,2026-05-19T22:00:00Z,USD,COMPLETED\\n2,cust_2,200.0,2026-05-19T22:01:00Z,EUR,COMPLETED\\n3,cust_3,-50.0,2026-05-19T22:02:00Z,USD,COMPLETED\\n4,cust_4,300.0,2026-05-19T22:03:00Z,USD,PENDING\\n\")' && kedro run --env local_infra"
+      bash -c "pip install -e . && python -c 'import boto3; s3 = boto3.client(\"s3\", endpoint_url=\"http://minio:9000\", aws_access_key_id=\"minioadmin\", aws_secret_access_key=\"minioadmin\"); s3.put_object(Bucket=\"my-data-bucket\", Key=\"raw/financial/data.csv\", Body=\"transaction_id,customer_id,amount,transaction_date,currency,status\\n1,cust_1,150.0,2026-05-19T22:00:00Z,USD,COMPLETED\\n2,cust_2,200.0,2026-05-19T22:01:00Z,EUR,COMPLETED\\n3,cust_3,-50.0,2026-05-19T22:02:00Z,USD,COMPLETED\\n4,cust_4,300.0,2026-05-19T22:03:00Z,USD,PENDING\\n\")' && python -m kedro run --env local_infra"
     depends_on:
       emr-master:
         condition: service_started
@@ -103,7 +103,7 @@ services:
       - AWS_ACCESS_KEY_ID=minioadmin
       - AWS_SECRET_ACCESS_KEY=minioadmin
     command: >
-      bash -c "pip install -e . && python -c 'import boto3; s3 = boto3.client(\"s3\", endpoint_url=\"http://minio:9000\", aws_access_key_id=\"minioadmin\", aws_secret_access_key=\"minioadmin\"); s3.put_object(Bucket=\"my-data-bucket\", Key=\"raw/financial/data.csv\", Body=\"transaction_id,customer_id,amount,transaction_date,currency,status\\n1,cust_1,150.0,2026-05-19T22:00:00Z,USD,COMPLETED\\n2,cust_2,200.0,2026-05-19T22:01:00Z,EUR,COMPLETED\\n3,cust_3,-50.0,2026-05-19T22:02:00Z,USD,COMPLETED\\n4,cust_4,300.0,2026-05-19T22:03:00Z,USD,PENDING\\n\")' && kedro run --env local_infra"
+      bash -c "pip install -e . && python -c 'import boto3; s3 = boto3.client(\"s3\", endpoint_url=\"http://minio:9000\", aws_access_key_id=\"minioadmin\", aws_secret_access_key=\"minioadmin\"); s3.put_object(Bucket=\"my-data-bucket\", Key=\"raw/financial/data.csv\", Body=\"transaction_id,customer_id,amount,transaction_date,currency,status\\n1,cust_1,150.0,2026-05-19T22:00:00Z,USD,COMPLETED\\n2,cust_2,200.0,2026-05-19T22:01:00Z,EUR,COMPLETED\\n3,cust_3,-50.0,2026-05-19T22:02:00Z,USD,COMPLETED\\n4,cust_4,300.0,2026-05-19T22:03:00Z,USD,PENDING\\n\")' && python -m kedro run --env local_infra"
     depends_on:
       minio:
         condition: service_started
