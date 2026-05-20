@@ -51,7 +51,7 @@ services:
         condition: service_completed_successfully
 {% elif cookiecutter.compute_target == 'AWS EMR' %}
   emr-master:
-    image: bitnamilegacy/spark:3.3.0
+    image: bitnamilegacy/spark:3.4.1
     container_name: emr-master
     environment:
       - SPARK_MODE=master
@@ -64,7 +64,7 @@ services:
       - '7077:7077'
       
   emr-worker:
-    image: bitnamilegacy/spark:3.3.0
+    image: bitnamilegacy/spark:3.4.1
     container_name: emr-worker
     environment:
       - SPARK_MODE=worker
@@ -75,7 +75,7 @@ services:
       - emr-master
 
   emr-submit:
-    image: bitnamilegacy/spark:3.3.0
+    image: bitnamilegacy/spark:3.4.1
     container_name: emr-submit
     volumes:
       - .:/workspace
@@ -94,7 +94,7 @@ services:
         condition: service_completed_successfully
 {% elif cookiecutter.compute_target == 'AWS EMR Serverless' %}
   emr-serverless-emulator:
-    image: bitnamilegacy/spark:3.3.0
+    image: bitnamilegacy/spark:3.4.1
     container_name: emr-serverless
     volumes:
       - .:/workspace
