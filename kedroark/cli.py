@@ -89,6 +89,36 @@ def _post_generate(project_slug: str, compute: str, include_finance: str):
     pass
 
 
+def _get_docker_compose_cmd() -> list[str]:
+    """Helper to detect and return the correct docker compose command (V2 or V1)."""
+    import shutil
+    import subprocess
+
+    # Try 'docker compose' (V2) first
+    if shutil.which("docker"):
+        try:
+            # Run 'docker compose version' to verify V2 is working
+            res = subprocess.run(
+                ["docker", "compose", "version"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if res.returncode == 0:
+                return ["docker", "compose"]
+        except Exception:
+            pass
+
+    # Try 'docker-compose' (V1) next
+    if shutil.which("docker-compose"):
+        return ["docker-compose"]
+
+    # If neither is found, raise FileNotFoundError
+    raise FileNotFoundError(
+        "Neither 'docker compose' nor 'docker-compose' command was found in PATH."
+    )
+
+
 @app.command()
 def test_local(
     env: str = typer.Option(
@@ -109,7 +139,16 @@ def test_local(
         raise typer.Exit(1)
 
     try:
-        subprocess.run(["docker-compose", "up", "-d"], check=True)
+        compose_cmd = _get_docker_compose_cmd()
+    except FileNotFoundError as e:
+        console.print(f"[bold red]Error: {e}[/bold red]")
+        console.print(
+            "[bold yellow]Please make sure Docker and Docker Compose are installed and running.[/bold yellow]"
+        )
+        raise typer.Exit(1)
+
+    try:
+        subprocess.run(compose_cmd + ["up", "-d"], check=True)
         # Determine which compute target service exists in docker-compose
         with open("docker-compose.yml", "r") as f:
             compose_content = f.read()
@@ -127,8 +166,8 @@ def test_local(
                 f"[bold cyan]Detected target compute. Running {service_to_run}...[/bold cyan]"
             )
             subprocess.run(
-                [
-                    "docker-compose",
+                compose_cmd
+                + [
                     "up",
                     "--build",
                     "--abort-on-container-exit",
@@ -142,9 +181,13 @@ def test_local(
 
     except subprocess.CalledProcessError as e:
         console.print(f"[bold red]Pipeline or infrastructure failed: {e}[/bold red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[bold red]An unexpected error occurred: {e}[/bold red]")
+        raise typer.Exit(1)
     finally:
         console.print("[bold yellow]Tearing down local infrastructure...[/bold yellow]")
-        subprocess.run(["docker-compose", "down"])
+        subprocess.run(compose_cmd + ["down"])
 
 
 if __name__ == "__main__":
