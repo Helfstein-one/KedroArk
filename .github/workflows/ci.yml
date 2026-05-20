@@ -19,12 +19,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install poetry
+          pip install ruff poetry
           poetry install
       - name: Check Python Code Formatting (Ruff)
-        run: poetry run ruff format --check kedroark/
+        run: ruff format --check kedroark/
       - name: Run Python Linter (Ruff)
-        run: poetry run ruff check kedroark/
+        run: ruff check kedroark/
 
   scaffold:
     name: Scaffold EMR/Glue Projects
