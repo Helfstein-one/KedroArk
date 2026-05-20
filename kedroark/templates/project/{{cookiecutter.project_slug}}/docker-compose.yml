@@ -31,7 +31,7 @@ services:
 
 {% if cookiecutter.compute_target == 'AWS Glue' %}
   glue-dev:
-    image: amazon/aws-glue-libs:4.0.0
+    image: amazon/aws-glue-libs:glue_libs_4.0.0_image_01
     container_name: glue-runner
     environment:
       - AWS_ACCESS_KEY_ID=minioadmin
