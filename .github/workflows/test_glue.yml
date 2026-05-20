@@ -22,12 +22,12 @@ jobs:
           poetry install
           python -m pip install -e .
       - name: Generate Glue Project
-        run: kedroark init test-glue-project --compute "AWS Glue" --example finance --local-infra
+        run: kedroark init test_glue_project --compute "AWS Glue" --example finance --local-infra
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: glue-project
-          path: test-glue-project/
+          path: test_glue_project/
 
   lint:
     needs: scaffold
@@ -39,10 +39,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: glue-project
-          path: test-glue-project
+          path: test_glue_project
       - name: Check Python Code Formatting & Linting (Ruff)
         run: |
-          cd test-glue-project
+          cd test_glue_project
           python -m pip install ruff
           ruff check .
           ruff format --check .
@@ -54,13 +54,13 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: glue-project
-          path: test-glue-project
+          path: test_glue_project
       - name: Terraform Formatting and Validation
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
       - run: |
-          cd test-glue-project/terraform
+          cd test_glue_project/terraform
           terraform init -backend=false
           terraform fmt -check
           terraform validate
@@ -75,10 +75,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: glue-project
-          path: test-glue-project
+          path: test_glue_project
       - name: Run Unit Tests
         run: |
-          cd test-glue-project
+          cd test_glue_project
           python -m pip install -e .
           pytest -m unit
 
@@ -95,10 +95,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: glue-project
-          path: test-glue-project
+          path: test_glue_project
       - name: Run Integration & Local Infrastructure Tests
         run: |
-          cd test-glue-project
+          cd test_glue_project
           kedroark test-local
 
   build:
@@ -111,9 +111,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: glue-project
-          path: test-glue-project
+          path: test_glue_project
       - name: Verify Package Build (Wheel)
         run: |
-          cd test-glue-project
+          cd test_glue_project
           python -m pip install build
           python -m build

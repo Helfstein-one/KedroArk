@@ -32,6 +32,9 @@ htmlcov/
 test-glue-project/
 test-emr-project/
 test-emrs-project/
+test_glue_project/
+test_emr_project/
+test_emrs_project/
 
 # Terraform
 .terraform/
