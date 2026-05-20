@@ -1,4 +1,4 @@
-name: Test KedroArk - AWS EMR Serverless
+name: KedroArk CI/CD
 
 on:
   push:
@@ -7,7 +7,27 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
+  cli-quality:
+    name: KedroArk CLI Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+      - name: Check Python Code Formatting (Ruff)
+        run: poetry run ruff format --check kedroark/
+      - name: Run Python Linter (Ruff)
+        run: poetry run ruff check kedroark/
+
   scaffold:
+    name: Scaffold EMR/Glue Projects
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,70 +41,100 @@ jobs:
           pip install poetry
           poetry install
           python -m pip install -e .
+      - name: Generate Glue Project
+        run: kedroark init test_glue_project --compute "AWS Glue" --example finance --local-infra
+      - name: Generate EMR Project
+        run: kedroark init test_emr_project --compute "AWS EMR" --example finance --local-infra
       - name: Generate EMR Serverless Project
         run: kedroark init test_emrs_project --compute "AWS EMR Serverless" --example finance --local-infra
-      - name: Upload Artifact
+      - name: Upload Glue Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: glue-project
+          path: test_glue_project/
+      - name: Upload EMR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: emr-project
+          path: test_emr_project/
+      - name: Upload EMRS Artifact
         uses: actions/upload-artifact@v4
         with:
           name: emrs-project
           path: test_emrs_project/
 
   lint:
+    name: Lint Generated (${{ matrix.project }})
     needs: scaffold
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [glue, emr, emrs]
     steps:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - uses: actions/download-artifact@v4
         with:
-          name: emrs-project
-          path: test_emrs_project
+          name: ${{ matrix.project }}-project
+          path: test_${{ matrix.project }}_project
       - name: Check Python Code Formatting & Linting (Ruff)
         run: |
-          cd test_emrs_project
+          cd test_${{ matrix.project }}_project
           python -m pip install ruff
           ruff check .
           ruff format --check .
 
   terraform:
+    name: Validate Terraform (${{ matrix.project }})
     needs: scaffold
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [glue, emr, emrs]
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: emrs-project
-          path: test_emrs_project
+          name: ${{ matrix.project }}-project
+          path: test_${{ matrix.project }}_project
       - name: Terraform Formatting and Validation
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
       - run: |
-          cd test_emrs_project/terraform
+          cd test_${{ matrix.project }}_project/terraform
           terraform init -backend=false
           terraform fmt -check
           terraform validate
 
   test-unit:
+    name: Unit Test (${{ matrix.project }})
     needs: scaffold
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [glue, emr, emrs]
     steps:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - uses: actions/download-artifact@v4
         with:
-          name: emrs-project
-          path: test_emrs_project
+          name: ${{ matrix.project }}-project
+          path: test_${{ matrix.project }}_project
       - name: Run Unit Tests
         run: |
-          cd test_emrs_project
+          cd test_${{ matrix.project }}_project
           python -m pip install -e .
           pytest -m unit
 
   test-integration:
-    needs: test-unit
+    name: Integration Test (${{ matrix.project }})
+    needs: [scaffold, test-unit]
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [glue, emr, emrs]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -94,26 +144,30 @@ jobs:
         run: python -m pip install -e .
       - uses: actions/download-artifact@v4
         with:
-          name: emrs-project
-          path: test_emrs_project
+          name: ${{ matrix.project }}-project
+          path: test_${{ matrix.project }}_project
       - name: Run Integration & Local Infrastructure Tests
         run: |
-          cd test_emrs_project
+          cd test_${{ matrix.project }}_project
           kedroark test-local
 
   build:
+    name: Build Package (${{ matrix.project }})
     needs: test-unit
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [glue, emr, emrs]
     steps:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - uses: actions/download-artifact@v4
         with:
-          name: emrs-project
-          path: test_emrs_project
+          name: ${{ matrix.project }}-project
+          path: test_${{ matrix.project }}_project
       - name: Verify Package Build (Wheel)
         run: |
-          cd test_emrs_project
+          cd test_${{ matrix.project }}_project
           python -m pip install build
           python -m build

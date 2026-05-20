@@ -25,7 +25,7 @@ def main():
     job.init(args["JOB_NAME"], args)
 
     # Initialize Kedro
-    project_path = Path(__file__).resolve().parent
+    project_path = Path(__file__).resolve().parent.parent
     bootstrap_project(project_path)
 
     with KedroSession.create(project_path=project_path) as session:
