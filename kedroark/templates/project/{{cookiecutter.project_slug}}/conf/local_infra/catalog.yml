@@ -1,0 +1,23 @@
+{% if cookiecutter.include_local_infra == 'yes' and cookiecutter.include_finance_example == 'yes' %}
+raw_financial_data:
+  type: spark.SparkDataset
+  filepath: s3a://my-data-bucket/raw/financial/
+  file_format: csv
+  load_args:
+    header: true
+    inferSchema: true
+
+cleaned_financial_data:
+  type: spark.SparkDataset
+  filepath: s3a://my-data-bucket/silver/financial_clean/
+  file_format: parquet
+  save_args:
+    mode: overwrite
+
+aggregated_financial_data:
+  type: spark.SparkDataset
+  filepath: local.db.financial_aggregations
+  file_format: iceberg
+  save_args:
+    mode: append
+{% endif %}

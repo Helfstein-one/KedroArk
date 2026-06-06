@@ -1,0 +1,8 @@
+{
+  "project_name": "My Kedro Project",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "author_name": "Data Team",
+  "compute_target": ["AWS Glue", "AWS EMR", "AWS EMR Serverless"],
+  "include_finance_example": ["yes", "no"],
+  "include_local_infra": ["yes", "no"]
+}
